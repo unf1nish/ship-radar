@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🚢 Ship Radar · Rastreador AIS Global</title>
+  <title>🚢 Ship Radar · AIS Global</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -25,22 +25,23 @@
     header p{font-size:.82rem;color:#6b8aaa;margin-top:3px}
     .header-badge{margin-left:auto;font-size:.7rem;padding:4px 10px;background:rgba(100,181,246,.12);border:1px solid rgba(100,181,246,.25);border-radius:20px;color:#64b5f6;white-space:nowrap}
     .card{background:rgba(255,255,255,.04);border:1px solid rgba(100,181,246,.22);border-radius:14px;padding:20px 24px;backdrop-filter:blur(12px)}
-    /* API key banner */
-    .apikey-banner{background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.3);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .apikey-banner .bicon{font-size:1.4rem}
-    .apikey-banner .btxt{flex:1;min-width:200px}
-    .apikey-banner .btxt strong{color:#ffc107;font-size:.9rem;display:block;margin-bottom:3px}
-    .apikey-banner .btxt span{font-size:.78rem;color:#8a9bb0}
-    .apikey-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-    .apikey-row input{flex:1;min-width:220px;padding:9px 13px;border-radius:8px;border:1px solid rgba(255,193,7,.35);background:rgba(0,0,0,.3);color:#ffe082;font-size:.88rem;outline:none;font-family:monospace;letter-spacing:.05em}
-    .apikey-row input:focus{border-color:#ffc107;box-shadow:0 0 10px rgba(255,193,7,.25)}
-    .apikey-row input::placeholder{color:#5a5030;letter-spacing:0;font-family:'Segoe UI',sans-serif}
-    .btn-apikey{padding:9px 16px;border-radius:8px;border:none;cursor:pointer;background:rgba(255,193,7,.18);color:#ffc107;border:1px solid rgba(255,193,7,.4);font-size:.82rem;font-weight:600;white-space:nowrap;transition:all .25s}
-    .btn-apikey:hover{background:rgba(255,193,7,.3)}
-    .source-badge{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;padding:3px 9px;border-radius:20px;border:1px solid;white-space:nowrap}
-    .src-datalastic{background:rgba(100,181,246,.1);border-color:rgba(100,181,246,.3);color:#64b5f6}
-    .src-digitraffic{background:rgba(76,175,80,.1);border-color:rgba(76,175,80,.3);color:#81c784}
-    .src-none{background:rgba(255,82,82,.1);border-color:rgba(255,82,82,.3);color:#ef9a9a}
+    /* key banner */
+    .key-banner{border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+    .key-banner.need{background:rgba(255,193,7,.05);border:1px solid rgba(255,193,7,.3)}
+    .key-banner.ok{background:rgba(76,175,80,.05);border:1px solid rgba(76,175,80,.3)}
+    .key-banner .bicon{font-size:1.5rem;margin-top:2px}
+    .key-banner .btxt{flex:1;min-width:200px}
+    .key-banner .btxt strong{font-size:.9rem;display:block;margin-bottom:4px}
+    .key-banner.need .btxt strong{color:#ffc107}
+    .key-banner.ok  .btxt strong{color:#81c784}
+    .key-banner .btxt span{font-size:.78rem;color:#8a9bb0;line-height:1.5}
+    .key-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .key-row input{flex:1;min-width:240px;padding:9px 13px;border-radius:8px;border:1px solid rgba(255,193,7,.35);background:rgba(0,0,0,.3);color:#ffe082;font-size:.85rem;outline:none;font-family:monospace}
+    .key-row input:focus{border-color:#ffc107;box-shadow:0 0 10px rgba(255,193,7,.2)}
+    .key-row input::placeholder{color:#5a5030;font-family:'Segoe UI',sans-serif;font-size:.82rem}
+    .btn-save{padding:9px 16px;border-radius:8px;border:1px solid rgba(255,193,7,.4);background:rgba(255,193,7,.15);color:#ffc107;font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .25s}
+    .btn-save:hover{background:rgba(255,193,7,.28)}
+    /* search */
     .search-section{margin:0 0 18px}
     .search-label{display:flex;align-items:center;gap:7px;font-size:.88rem;color:#90c8f8;font-weight:500;margin-bottom:10px}
     .search-row{display:flex;gap:10px;flex-wrap:wrap}
@@ -49,45 +50,51 @@
     .search-row input::placeholder{color:#3d5a70}
     .btn{padding:12px 22px;border-radius:9px;border:none;cursor:pointer;font-size:.93rem;font-weight:600;transition:all .28s;white-space:nowrap}
     .btn-primary{background:linear-gradient(135deg,#1251a3,#1e88e5);color:#fff;box-shadow:0 4px 18px rgba(30,136,229,.45)}
-    .btn-primary:hover:not(:disabled){background:linear-gradient(135deg,#1565c0,#42a5f5);box-shadow:0 6px 24px rgba(30,136,229,.65);transform:translateY(-2px)}
+    .btn-primary:hover:not(:disabled){background:linear-gradient(135deg,#1565c0,#42a5f5);transform:translateY(-2px)}
     .btn-primary:disabled{opacity:.45;cursor:not-allowed}
     .btn-secondary{background:rgba(255,255,255,.08);color:#90caf9;border:1px solid rgba(100,181,246,.3)}
     .btn-secondary:hover{background:rgba(255,255,255,.14);transform:translateY(-2px)}
+    /* status */
     .status-bar{display:flex;align-items:center;gap:9px;margin-top:13px;font-size:.85rem;min-height:26px;flex-wrap:wrap}
-    .status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;transition:background .4s}
+    .status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
     .s-idle .status-dot{background:#4a6275}
-    .s-searching .status-dot{background:#ffb300;animation:blink 1s infinite}
-    .s-found .status-dot{background:#43a047;animation:blink 2.5s infinite}
+    .s-live .status-dot{background:#43a047;animation:blink 1.2s infinite}
+    .s-searching .status-dot{background:#ffb300;animation:blink .8s infinite}
+    .s-found .status-dot{background:#1e88e5;animation:blink 2s infinite}
     .s-error .status-dot{background:#e53935}
-    @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+    @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(1.45)}}
     .s-idle .status-text{color:#607d8b}
+    .s-live .status-text{color:#66bb6a}
     .s-searching .status-text{color:#ffca28}
-    .s-found .status-text{color:#66bb6a}
+    .s-found .status-text{color:#64b5f6}
     .s-error .status-text{color:#ef5350}
-    .timeout-wrap{margin-top:10px;display:none}
-    .timeout-track{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
-    .timeout-fill{height:100%;width:100%;border-radius:3px;background:linear-gradient(90deg,#1e88e5,#42a5f5);transform-origin:left;animation:drain 30s linear forwards}
-    @keyframes drain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
-    .timeout-label{font-size:.75rem;color:#546e7a;margin-top:4px}
+    /* counter */
+    .counter-row{display:flex;gap:14px;margin-top:9px;flex-wrap:wrap}
+    .counter-pill{font-size:.76rem;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#90a4ae}
+    .counter-pill span{color:#e0f4ff;font-weight:600}
+    /* map */
     #map{height:500px;border-radius:14px;border:1px solid rgba(100,181,246,.28);margin-bottom:18px;box-shadow:0 8px 40px rgba(0,0,0,.55);overflow:hidden}
+    /* info */
     .info-section h2{font-size:.95rem;color:#64b5f6;margin-bottom:14px;display:flex;align-items:center;gap:7px}
     .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px}
     .info-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px 14px;transition:border-color .3s,box-shadow .3s}
     .info-card.active{border-color:rgba(100,181,246,.4);box-shadow:0 0 12px rgba(100,181,246,.12)}
-    .info-card .ic-label{font-size:.72rem;color:#607d8b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
-    .info-card .ic-value{font-size:1rem;color:#cce5ff;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .ic-value.blue{color:#64b5f6}
-    .ic-value.green{color:#66bb6a}
+    .ic-label{font-size:.72rem;color:#607d8b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+    .ic-value{font-size:1rem;color:#cce5ff;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ic-value.blue{color:#64b5f6}.ic-value.green{color:#66bb6a}
+    /* ships panel */
     .ships-panel{margin-top:18px}
     .ships-panel h2{font-size:.95rem;color:#64b5f6;margin-bottom:12px;display:flex;align-items:center;gap:7px}
-    #shipsList{list-style:none;display:flex;flex-direction:column;gap:7px;max-height:280px;overflow-y:auto}
+    #shipsList{list-style:none;display:flex;flex-direction:column;gap:7px;max-height:300px;overflow-y:auto}
     #shipsList::-webkit-scrollbar{width:5px}
     #shipsList::-webkit-scrollbar-thumb{background:rgba(100,181,246,.25);border-radius:3px}
-    .ship-item{display:flex;align-items:center;gap:10px;padding:9px 13px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:border-color .25s,background .25s}
+    .ship-item{display:flex;align-items:center;gap:10px;padding:9px 13px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .25s}
     .ship-item:hover{background:rgba(100,181,246,.09);border-color:rgba(100,181,246,.3)}
     .ship-item.selected{background:rgba(30,136,229,.12);border-color:#1e88e5}
-    .ship-item .si-name{font-size:.9rem;color:#ddeeff;font-weight:500;flex:1}
-    .ship-item .si-sub{font-size:.72rem;color:#607d8b}
+    .si-name{font-size:.9rem;color:#ddeeff;font-weight:500;flex:1}
+    .si-sub{font-size:.72rem;color:#607d8b}
+    .si-gps{font-size:.72rem}
+    /* popup */
     .leaflet-popup-content-wrapper{background:#0d2137!important;color:#ddeeff!important;border:1px solid #1e88e5!important;border-radius:10px!important;box-shadow:0 4px 20px rgba(30,136,229,.4)!important}
     .leaflet-popup-tip{background:#0d2137!important}
     .popup-inner h3{color:#64b5f6;margin-bottom:8px;font-size:1rem}
@@ -106,445 +113,430 @@
   <div class="ship-anim">🚢</div>
   <div>
     <h1>Ship Radar · Rastreador AIS Global</h1>
-    <p>Cobertura mundial · Pacífico, Atlántico, Asia, América · OpenStreetMap + Leaflet.js</p>
+    <p>Cobertura mundial en tiempo real · Asia, América, Pacífico, Atlántico</p>
   </div>
-  <div class="header-badge">🌎 Datalastic + Digitraffic</div>
+  <div class="header-badge">🟢 aisstream.io · LIVE</div>
 </header>
 
 <div class="page-wrap">
 
-  <!-- API KEY BANNER -->
-  <div class="apikey-banner" id="apikeyBanner">
+  <!-- KEY BANNER -->
+  <div class="key-banner need" id="keyBanner">
     <div class="bicon">🔑</div>
     <div class="btxt">
-      <strong>API Key de Datalastic — cobertura global (Asia, América, Pacífico)</strong>
-      <span>Registrate gratis en <a href="https://datalastic.com/pricing/" target="_blank" style="color:#ffc107">datalastic.com</a> → plan <em>Starter</em> (20.000 créditos/mes gratis). Pega tu API key aquí. Sin ella solo funciona el Báltico.</span>
-    </div>
-    <div class="apikey-row">
-      <input type="text" id="apikeyInput" placeholder="Pega tu API key aquí (xxxxxxxx-xxxx-xxxx-…)" autocomplete="off" spellcheck="false" />
-      <button class="btn-apikey" onclick="saveApiKey()">Guardar ✔</button>
+      <strong>API Key gratuita de aisstream.io — cobertura global real</strong>
+      <span>
+        1. Ve a <a href="https://aisstream.io" target="_blank" style="color:#ffc107">aisstream.io</a> → haz clic en <em>"Sign Up"</em><br>
+        2. Confirma tu email y copia tu API key desde el dashboard<br>
+        3. Pégala aquí — es <strong style="color:#fff">100% gratuita</strong>, sin tarjeta, cobertura mundial
+      </span>
+      <div class="key-row">
+        <input type="text" id="keyInput" placeholder="Pega tu API key de aisstream.io aquí…" autocomplete="off" spellcheck="false" />
+        <button class="btn-save" onclick="saveKey()">Guardar ✔</button>
+      </div>
     </div>
   </div>
 
   <div class="card search-section">
-    <div class="search-label"><span>📡</span><span>Nombre del buque (cualquier océano del mundo)</span></div>
+    <div class="search-label"><span>📡</span><span>Nombre del buque — cualquier océano del mundo</span></div>
     <div class="search-row">
-      <input type="text" id="shipInput" placeholder="Ej: MSC MARIANNA, EVER GIVEN, MAERSK CHENNAI, APL COLOMBIA…" maxlength="60" autocomplete="off" spellcheck="false" />
+      <input type="text" id="shipInput"
+        placeholder="Ej: MSC MARIANNA, EVER GIVEN, MAERSK CHENNAI, APL COLOMBIA, RUBICON…"
+        maxlength="60" autocomplete="off" spellcheck="false" />
       <button class="btn btn-primary" id="btnSearch" onclick="startSearch()">🔍 Buscar</button>
+      <button class="btn btn-secondary" id="btnStop" style="display:none" onclick="stopSearch()">⏹ Detener</button>
       <button class="btn btn-secondary" id="btnClear" style="display:none" onclick="clearSearch()">🔄 Nueva</button>
     </div>
-    <div class="status-bar s-idle" id="statusBar"><div class="status-dot"></div><span class="status-text" id="statusText">Listo.</span></div>
-    <div class="timeout-wrap" id="timeoutWrap">
-      <div class="timeout-track"><div class="timeout-fill" id="timeoutFill"></div></div>
-      <div class="timeout-label">Buscando…</div>
+    <div class="status-bar s-idle" id="statusBar">
+      <div class="status-dot"></div>
+      <span class="status-text" id="statusText">Listo. Agrega tu API key y busca un buque.</span>
+    </div>
+    <div class="counter-row" id="counterRow" style="display:none">
+      <div class="counter-pill">Mensajes AIS recibidos: <span id="cntMsg">0</span></div>
+      <div class="counter-pill">Buques encontrados: <span id="cntShips">0</span></div>
+      <div class="counter-pill">Con GPS: <span id="cntGps">0</span></div>
     </div>
   </div>
 
   <div id="map"></div>
 
-  <div class="card ships-panel" id="shipsPanel" style="display:none;margin-bottom:18px;">
-    <h2>🔎 Resultados — clic para centrar en el mapa</h2>
+  <div class="card ships-panel" id="shipsPanel" style="display:none;margin-bottom:18px">
+    <h2>🔎 Buques detectados — clic para centrar</h2>
     <ul id="shipsList"></ul>
   </div>
 
   <div class="card info-section">
-    <h2>📊 Información del buque seleccionado</h2>
+    <h2>📊 Buque seleccionado</h2>
     <div class="info-grid">
       <div class="info-card" id="ic-name"><div class="ic-label">🚢 Nombre</div><div class="ic-value blue" id="iv-name">—</div></div>
       <div class="info-card" id="ic-mmsi"><div class="ic-label">🆔 MMSI</div><div class="ic-value" id="iv-mmsi">—</div></div>
-      <div class="info-card" id="ic-flag"><div class="ic-label">🏳️ Bandera</div><div class="ic-value" id="iv-flag">—</div></div>
-      <div class="info-card" id="ic-type"><div class="ic-label">🚧 Tipo</div><div class="ic-value" id="iv-type">—</div></div>
+      <div class="info-card" id="ic-callsign"><div class="ic-label">📷 Indicativo</div><div class="ic-value" id="iv-callsign">—</div></div>
+      <div class="info-card" id="ic-flag"><div class="ic-label">🏳️ Bandera / País</div><div class="ic-value" id="iv-flag">—</div></div>
       <div class="info-card" id="ic-lat"><div class="ic-label">🌐 Latitud</div><div class="ic-value" id="iv-lat">—</div></div>
       <div class="info-card" id="ic-lon"><div class="ic-label">🌐 Longitud</div><div class="ic-value" id="iv-lon">—</div></div>
-      <div class="info-card" id="ic-speed"><div class="ic-label">⚡ Velocidad</div><div class="ic-value green" id="iv-speed">—</div></div>
+      <div class="info-card" id="ic-speed"><div class="ic-label">⚡ Velocidad (SOG)</div><div class="ic-value green" id="iv-speed">—</div></div>
+      <div class="info-card" id="ic-cog"><div class="ic-label">🧭 Rumbo (COG)</div><div class="ic-value" id="iv-cog">—</div></div>
       <div class="info-card" id="ic-dest"><div class="ic-label">🛳️ Destino</div><div class="ic-value" id="iv-dest">—</div></div>
+      <div class="info-card" id="ic-type"><div class="ic-label">🚧 Tipo</div><div class="ic-value" id="iv-type">—</div></div>
       <div class="info-card" id="ic-updated"><div class="ic-label">🕐 Última señal</div><div class="ic-value" id="iv-updated">—</div></div>
-      <div class="info-card" id="ic-src"><div class="ic-label">📡 Fuente</div><div class="ic-value" id="iv-src">—</div></div>
+      <div class="info-card" id="ic-imo"><div class="ic-label">📋 IMO</div><div class="ic-value" id="iv-imo">—</div></div>
     </div>
   </div>
 
 </div>
 
 <script>
-/* particles */
-(function(){
-  const w=document.getElementById('particles');
-  for(let i=0;i<22;i++){
-    const p=document.createElement('div');p.className='particle';
-    const s=3+Math.random()*6;
-    p.style.cssText='width:'+s+'px;height:'+s+'px;left:'+(Math.random()*100)+'%;animation-duration:'+(12+Math.random()*20)+'s;animation-delay:'+(-Math.random()*20)+'s';
-    w.appendChild(p);
-  }
-})();
+/* ─ particles ─ */
+(function(){const w=document.getElementById('particles');for(let i=0;i<22;i++){const p=document.createElement('div');p.className='particle';const s=3+Math.random()*6;p.style.cssText='width:'+s+'px;height:'+s+'px;left:'+(Math.random()*100)+'%;animation-duration:'+(12+Math.random()*20)+'s;animation-delay:'+(-Math.random()*20)+'s';w.appendChild(p);}})();
 
-/* ——— state ——— */
-let mapObj=null, markers={}, selectedMMSI=null, foundVessels={}, pollTimer=null, searchTimer=null;
+/* ─ state ─ */
+let mapObj=null, ws=null, markers={}, selectedMMSI=null;
+let vessels={};  // mmsi -> vessel object
+let msgCount=0, searchTarget='';
+let autoSelectDone=false;
 
-/* ——— api key ——— */
-function getApiKey(){return localStorage.getItem('datalastic_key')||'';}
-function saveApiKey(){
-  const v=document.getElementById('apikeyInput').value.trim();
-  if(!v){alert('Pega una API key válida primero.');return;}
-  localStorage.setItem('datalastic_key',v);
-  document.getElementById('apikeyBanner').style.background='rgba(76,175,80,.07)';
-  document.getElementById('apikeyBanner').style.borderColor='rgba(76,175,80,.35)';
-  setStatus('idle','✅ API key guardada. Ya puedes buscar buques en todo el mundo.');
+/* ─ api key ─ */
+function getKey(){return localStorage.getItem('aisstream_key')||'';}
+function saveKey(){
+  const v=document.getElementById('keyInput').value.trim();
+  if(!v){alert('Pega una API key válida.');return;}
+  localStorage.setItem('aisstream_key',v);
+  setBannerOk();
+  setStatus('idle','\u2705 API key guardada. Ingresa un nombre de buque y presiona Buscar.');
+}
+function setBannerOk(){
+  const b=document.getElementById('keyBanner');
+  b.className='key-banner ok';
+  b.querySelector('.btxt strong').textContent='✅ API key de aisstream.io configurada — cobertura global activa';
 }
 (function(){
-  const k=getApiKey();
-  if(k){document.getElementById('apikeyInput').value=k;
-    document.getElementById('apikeyBanner').style.background='rgba(76,175,80,.07)';
-    document.getElementById('apikeyBanner').style.borderColor='rgba(76,175,80,.35)';}
+  const k=getKey();
+  if(k){document.getElementById('keyInput').value=k;setBannerOk();}
 })();
 
-/* ——— map ——— */
+/* ─ map ─ */
 function initMap(){
   if(mapObj)return;
-  mapObj=L.map('map',{zoomControl:true}).setView([10,-75],3);
+  mapObj=L.map('map').setView([10,-75],2);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',maxZoom:18}).addTo(mapObj);
+    {attribution:'&copy; OpenStreetMap',maxZoom:18}).addTo(mapObj);
 }
 
-/* ——— icon ——— */
+/* ─ icon ─ */
 function buildIcon(cog,selected){
-  const rot=isFinite(cog)?cog:0, col=selected?'#ff6d00':'#1e88e5';
+  const rot=isFinite(cog)?cog:0,col=selected?'#ff6d00':'#1e88e5';
   return L.divIcon({html:'<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">'
-    +'<g transform="rotate('+rot+',22,22)">'
-    +'<polygon points="22,5 31,39 22,33 13,39" fill="'+col+'" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>'
-    +'<circle cx="22" cy="22" r="4" fill="#fff"/></g>'
-    +'<circle cx="22" cy="22" r="19" fill="none" stroke="'+col+'" stroke-width="1.5" opacity="0.5">'
-    +'<animate attributeName="r" values="19;25;19" dur="2.4s" repeatCount="indefinite"/>'
-    +'<animate attributeName="opacity" values="0.5;0;0.5" dur="2.4s" repeatCount="indefinite"/>'
-    +'</circle></svg>',className:'',iconSize:[44,44],iconAnchor:[22,22],popupAnchor:[0,-24]});
+    +'<g transform="rotate('+rot+',22,22)"><polygon points="22,5 31,39 22,33 13,39" fill="'+col+'" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><circle cx="22" cy="22" r="4" fill="#fff"/></g>'
+    +'<circle cx="22" cy="22" r="19" fill="none" stroke="'+col+'" stroke-width="1.5" opacity="0.5"><animate attributeName="r" values="19;25;19" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0;0.5" dur="2.4s" repeatCount="indefinite"/></circle></svg>',
+    className:'',iconSize:[44,44],iconAnchor:[22,22],popupAnchor:[0,-24]});
 }
 
-/* ——— status ——— */
-function setStatus(state,msg){
-  document.getElementById('statusBar').className='status-bar s-'+state;
-  document.getElementById('statusText').textContent=msg;
-}
+/* ─ status ─ */
+function setStatus(s,msg){document.getElementById('statusBar').className='status-bar s-'+s;document.getElementById('statusText').textContent=msg;}
 
-/* ——— time formatting ——— */
+/* ─ time ─ */
 function fmtTime(ts){
-  if(ts==null||ts==='')return 'No disponible';
+  if(!ts)return 'En vivo';
   try{
-    let d=typeof ts==='string'?new Date(ts):new Date(ts<1e10?ts*1000:ts);
-    if(isNaN(d))return 'No disponible';
-    const diff=Math.round((Date.now()-d.getTime())/1000);
-    const rel=diff<0?'ahora':diff<60?'hace '+diff+'s':diff<3600?'hace '+Math.round(diff/60)+'min':diff<86400?'hace '+Math.round(diff/3600)+'h':'hace '+Math.round(diff/86400)+'d';
+    const d=new Date(ts);
+    if(isNaN(d))return 'En vivo';
+    const diff=Math.round((Date.now()-d)/1000);
+    const rel=diff<5?'ahora mismo':diff<60?'hace '+diff+'s':diff<3600?'hace '+Math.round(diff/60)+'min':'hace '+Math.round(diff/3600)+'h';
     return d.toISOString().substr(11,8)+' UTC ('+rel+')';
-  }catch{return String(ts);}
+  }catch{return 'En vivo';}
 }
 
-/* ——— panel ——— */
-const PANEL_FIELDS=['name','mmsi','flag','type','lat','lon','speed','dest','updated','src'];
+/* ─ panel ─ */
+const PFIELDS=['name','mmsi','callsign','flag','lat','lon','speed','cog','dest','type','updated','imo'];
 function updatePanel(v){
-  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
-  if(!v){
-    PANEL_FIELDS.forEach(k=>{set('iv-'+k,'—');const c=document.getElementById('ic-'+k);if(c)c.classList.remove('active');});
-    return;
-  }
-  set('iv-name',v.name||'—');
-  set('iv-mmsi',v.mmsi||'—');
-  set('iv-flag',v.flag||'—');
-  set('iv-type',v.type_specific||v.type||'—');
-  set('iv-lat',v.lat!=null?v.lat.toFixed(5)+'°':'—');
-  set('iv-lon',v.lon!=null?v.lon.toFixed(5)+'°':'—');
-  set('iv-speed',v.speed!=null?(+v.speed).toFixed(1)+' kn':v.sog!=null?(+v.sog).toFixed(1)+' kn':'—');
-  set('iv-dest',(v.destination||v.dest||'').replace(/@+$/,'').trim()||'No disponible');
-  set('iv-updated',fmtTime(v.updated||v.eta_UTC));
-  set('iv-src',v._src||'—');
-  PANEL_FIELDS.forEach(k=>{const c=document.getElementById('ic-'+k);if(c)c.classList.add('active');});
+  const $=id=>document.getElementById(id);
+  if(!v){PFIELDS.forEach(k=>{const e=$('iv-'+k);if(e)e.textContent='—';const c=$('ic-'+k);if(c)c.classList.remove('active');});return;}
+  const set=(k,val)=>{const e=$('iv-'+k);if(e)e.textContent=val||'—';const c=$('ic-'+k);if(c)c.classList.add('active');};
+  set('name',v.name);
+  set('mmsi',v.mmsi);
+  set('callsign',v.callsign);
+  set('flag',v.flag);
+  set('lat',v.lat!=null?v.lat.toFixed(5)+'°':null);
+  set('lon',v.lon!=null?v.lon.toFixed(5)+'°':null);
+  set('speed',v.sog!=null?(+v.sog).toFixed(1)+' kn':null);
+  set('cog',v.cog!=null?(+v.cog).toFixed(1)+'°':null);
+  set('dest',(v.destination||'').trim()||'No disponible');
+  set('type',v.shipType||null);
+  set('updated',fmtTime(v.lastSeen));
+  set('imo',v.imo||null);
 }
 
-/* ——— popup ——— */
+/* ─ popup ─ */
 function popupHtml(v){
-  const spd=v.speed!=null?(+v.speed).toFixed(1)+' kn':v.sog!=null?(+v.sog).toFixed(1)+' kn':'—';
-  const cog=v.course!=null?(+v.course).toFixed(1)+'°':v.cog!=null?(+v.cog).toFixed(1)+'°':'—';
-  const dest=(v.destination||v.dest||'').replace(/@+$/,'').trim()||'No disponible';
   return '<div class="popup-inner"><h3>🚢 '+(v.name||'Desconocido')+'</h3><p>'
     +'<strong>MMSI:</strong> '+(v.mmsi||'—')+'<br>'
     +'<strong>Bandera:</strong> '+(v.flag||'—')+'<br>'
-    +'<strong>Velocidad:</strong> '+spd+'<br>'
-    +'<strong>Rumbo:</strong> '+cog+'<br>'
-    +'<strong>Destino:</strong> '+dest+'<br>'
-    +'<strong>Última señal:</strong> '+fmtTime(v.updated||v.eta_UTC)+'<br>'
-    +'<strong>Fuente:</strong> '+(v._src||'—')
+    +'<strong>Velocidad:</strong> '+(v.sog!=null?(+v.sog).toFixed(1)+' kn':'—')+'<br>'
+    +'<strong>Rumbo:</strong> '+(v.cog!=null?(+v.cog).toFixed(1)+'°':'—')+'<br>'
+    +'<strong>Destino:</strong> '+((v.destination||'').trim()||'No disponible')+'<br>'
+    +'<strong>Señal:</strong> '+fmtTime(v.lastSeen)
     +'</p></div>';
 }
 
-/* ——— marker ——— */
-function placeMarker(v,selected){
+/* ─ marker ─ */
+function placeMarker(v,sel){
   if(v.lat==null||v.lon==null)return;
-  const ll=[+v.lat,+v.lon];
-  const cog=v.course??v.cog??0;
+  const ll=[v.lat,v.lon];
   if(markers[v.mmsi]){
-    markers[v.mmsi].setLatLng(ll).setIcon(buildIcon(cog,selected)).bindPopup(popupHtml(v));
+    markers[v.mmsi].setLatLng(ll).setIcon(buildIcon(v.cog,sel)).bindPopup(popupHtml(v));
   }else{
-    const mk=L.marker(ll,{icon:buildIcon(cog,selected)}).addTo(mapObj);
+    const mk=L.marker(ll,{icon:buildIcon(v.cog,sel)}).addTo(mapObj);
     mk.bindPopup(popupHtml(v));
     mk.on('click',()=>selectVessel(v.mmsi));
     markers[v.mmsi]=mk;
   }
 }
 
-/* ——— select ——— */
+/* ─ select ─ */
 function selectVessel(mmsi){
   selectedMMSI=mmsi;
-  const v=foundVessels[mmsi];if(!v)return;
+  const v=vessels[mmsi];if(!v)return;
   updatePanel(v);
-  Object.keys(foundVessels).forEach(m=>{const fv=foundVessels[m];if(fv.lat!=null)placeMarker(fv,String(m)===String(mmsi));});
-  if(v.lat!=null){mapObj.setView([+v.lat,+v.lon],6,{animate:true});if(markers[mmsi])markers[mmsi].openPopup();}
+  Object.keys(vessels).forEach(m=>{const fv=vessels[m];if(fv.lat!=null)placeMarker(fv,String(m)===String(mmsi));});
+  if(v.lat!=null){mapObj.setView([v.lat,v.lon],5,{animate:true});if(markers[mmsi])markers[mmsi].openPopup();}
   document.querySelectorAll('.ship-item').forEach(el=>el.classList.toggle('selected',el.dataset.mmsi===String(mmsi)));
 }
 
-/* ——— list ——— */
+/* ─ counters ─ */
+function updateCounters(){
+  document.getElementById('cntMsg').textContent=msgCount;
+  document.getElementById('cntShips').textContent=Object.keys(vessels).length;
+  document.getElementById('cntGps').textContent=Object.values(vessels).filter(v=>v.lat!=null).length;
+}
+
+/* ─ list ─ */
+let listDirty=false;
+function scheduleList(){if(!listDirty){listDirty=true;setTimeout(renderList,400);}}
 function renderList(){
+  listDirty=false;
   const panel=document.getElementById('shipsPanel'),ul=document.getElementById('shipsList');
-  const keys=Object.keys(foundVessels);
-  if(!keys.length){panel.style.display='none';return;}
-  panel.style.display='block';
+  const keys=Object.keys(vessels);
+  panel.style.display=keys.length?'block':'none';
+  // sort: GPS first
+  keys.sort((a,b)=>{
+    const av=vessels[a],bv=vessels[b];
+    if(av.lat!=null&&bv.lat==null)return -1;
+    if(av.lat==null&&bv.lat!=null)return 1;
+    return (av.name||'').localeCompare(bv.name||'');
+  });
   ul.innerHTML='';
   keys.forEach(mmsi=>{
-    const v=foundVessels[mmsi];
+    const v=vessels[mmsi];
     const hasPos=v.lat!=null;
     const li=document.createElement('li');
     li.className='ship-item'+(String(mmsi)===String(selectedMMSI)?' selected':'');
     li.dataset.mmsi=mmsi;
-    const srcCls=v._src&&v._src.includes('Datalastic')?'src-datalastic':v._src&&v._src.includes('Digitraffic')?'src-digitraffic':'src-none';
+    const spd=v.sog!=null?(+v.sog).toFixed(1)+' kn':'--';
     li.innerHTML='<span>🚢</span>'
       +'<span class="si-name">'+(v.name||'Sin nombre')+'</span>'
-      +'<span class="si-sub">'+(v.flag||'')+(v.type_specific?' · '+v.type_specific:'')+'</span>'
-      +'<span class="source-badge '+srcCls+'">'+(v._src||'sin fuente')+'</span>'
-      +(hasPos?'<span style="color:#66bb6a;font-size:.75rem">📍 GPS</span>':'<span style="color:#607d8b;font-size:.75rem">⚠️ sin GPS</span>');
+      +'<span class="si-sub">'+(v.flag||'')+(v.destination?' → '+v.destination:'')+' | '+spd+'</span>'
+      +'<span class="si-gps" style="color:'+(hasPos?'#66bb6a':'#607d8b')+'">'+(hasPos?'📍 LIVE':'\u26a0\ufe0f sin GPS')+'</span>';
     li.addEventListener('click',()=>selectVessel(mmsi));
     ul.appendChild(li);
   });
 }
 
-/* ======================================================
-   DATALASTIC — primary source, global coverage
-   endpoint: /vessel_find?name=X  returns lat/lon directly
-   docs: https://datalastic.com/api-reference/
-====================================================== */
-async function searchDatalastic(term){
-  const key=getApiKey();
-  if(!key)return[];
-  try{
-    // /vessel_find returns static + live position in one call
-    const url='https://api.datalastic.com/api/v0/vessel_find'
-      +'?api-key='+encodeURIComponent(key)
-      +'&name='+encodeURIComponent(term)
-      +'&fuzzy=0';
-    const r=await fetch(url,{signal:AbortSignal.timeout(18000)});
-    if(!r.ok){
-      if(r.status===401||r.status===403){
-        setStatus('error','❌ API key inválida. Verifica tu key de Datalastic.');
-      }
-      return[];
-    }
-    const d=await r.json();
-    const arr=d.data||d.result||d||[];
-    return Array.isArray(arr)?arr:[];
-  }catch(e){return[];}
-}
+/* ─ process AIS message ─ */
+function processMsg(data){
+  msgCount++;
+  const mt=data.MessageType;
+  const meta=data.MetaData||{};
+  const mmsi=String(meta.MMSI||meta.mmsi||'');
+  if(!mmsi)return;
 
-/* Try also /vessel (single vessel by MMSI) after getting candidates */
-async function fetchDatalasticLive(mmsi){
-  const key=getApiKey();if(!key)return null;
-  try{
-    const r=await fetch('https://api.datalastic.com/api/v0/vessel?api-key='+encodeURIComponent(key)+'&mmsi='+mmsi,
-      {signal:AbortSignal.timeout(12000)});
-    if(!r.ok)return null;
-    const d=await r.json();
-    return d.data||d||null;
-  }catch{return null;}
-}
+  const rawName=(meta.ShipName||meta.ship_name||'').trim();
 
-/* ======================================================
-   DIGITRAFFIC — fallback, Baltic/European coverage
-====================================================== */
-const DT_H={'Digitraffic-User':'ShipRadar/1.0'};
-async function searchDigitraffic(term){
-  const upper=term.trim().toUpperCase();
-  try{
-    const r=await fetch('https://meri.digitraffic.fi/api/ais/v1/vessels?name='+encodeURIComponent(term),
-      {headers:DT_H,signal:AbortSignal.timeout(18000)});
-    if(!r.ok)return[];
-    const arr=await r.json();
-    return (Array.isArray(arr)?arr:[]).filter(v=>(v.name||'').toUpperCase().includes(upper));
-  }catch{return[];}
-}
-async function fetchDigitraffic(mmsi){
-  try{
-    const r=await fetch('https://meri.digitraffic.fi/api/ais/v1/locations/'+mmsi,{headers:DT_H,signal:AbortSignal.timeout(10000)});
-    if(!r.ok)return null;
-    const d=await r.json();
-    if(d?.geometry?.coordinates?.length>=2){
-      const p=d.properties||{};
-      return{lat:d.geometry.coordinates[1],lon:d.geometry.coordinates[0],
-        sog:p.sog,cog:p.cog,
-        updated:p.time||p.msgtime||(p.timestampExternal??p.timestamp)};
-    }
-    return null;
-  }catch{return null;}
-}
-
-/* ======================================================
-   MAIN SEARCH
-====================================================== */
-async function startSearch(){
-  const raw=document.getElementById('shipInput').value.trim();
-  if(!raw){setStatus('error','⚠️ Ingresa el nombre del buque.');return;}
-  clearSearchState();
-  document.getElementById('btnSearch').disabled=true;
-  document.getElementById('btnClear').style.display='inline-block';
-  const wrapEl=document.getElementById('timeoutWrap');
-  wrapEl.innerHTML='<div class="timeout-track"><div class="timeout-fill"></div></div><div class="timeout-label">Buscando en toda la base AIS mundial…</div>';
-  wrapEl.style.display='block';
-  initMap();
-  setStatus('searching','📡 Consultando bases AIS…');
-
-  const key=getApiKey();
-  let results=[];
-  let source='';
-
-  if(key){
-    setStatus('searching','🌐 Buscando en Datalastic (cobertura mundial)…');
-    results=await searchDatalastic(raw);
-    source='Datalastic';
+  // name filter
+  if(searchTarget){
+    const n=rawName.toUpperCase();
+    if(!n.includes(searchTarget.toUpperCase()))return;
   }
 
-  // If Datalastic found nothing or no key, try Digitraffic
-  if(!results.length){
-    setStatus('searching','🗣️ Buscando en Digitraffic (Báltico / Europa)…');
-    const dtVessels=await searchDigitraffic(raw);
-    if(dtVessels.length){
-      // fetch locations in parallel
-      const locs=await Promise.all(dtVessels.map(v=>fetchDigitraffic(v.mmsi)));
-      results=dtVessels.map((v,i)=>({
-        name:v.name,mmsi:v.mmsi,destination:v.destination,
-        lat:locs[i]?locs[i].lat:null,lon:locs[i]?locs[i].lon:null,
-        speed:locs[i]?locs[i].sog:null,course:locs[i]?locs[i].cog:null,
-        updated:locs[i]?locs[i].updated:null,
-        _src:'Digitraffic'
-      }));
-      source='Digitraffic';
+  // init vessel
+  if(!vessels[mmsi]){
+    vessels[mmsi]={
+      mmsi,name:rawName,lat:null,lon:null,
+      sog:null,cog:null,destination:'',
+      callsign:'',flag:'',shipType:'',imo:'',
+      lastSeen:null
+    };
+  }
+  const v=vessels[mmsi];
+  if(rawName)v.name=rawName;
+  v.lastSeen=meta.time_utc||new Date().toISOString();
+
+  const msg=data.Message||{};
+
+  /* — PositionReport (Type 1/2/3) — */
+  const pos=msg.PositionReport||msg.StandardClassBPositionReport||msg.ExtendedClassBPositionReport;
+  if(pos){
+    const lat=pos.Latitude??pos.latitude;
+    const lon=pos.Longitude??pos.longitude;
+    if(lat!=null&&lon!=null&&Math.abs(lat)<=90&&Math.abs(lon)<=180&&!(lat===0&&lon===0)){
+      v.lat=+lat;v.lon=+lon;
+    }
+    if(pos.Sog!=null)v.sog=+pos.Sog;
+    else if(pos.SpeedOverGround!=null)v.sog=+pos.SpeedOverGround;
+    if(pos.Cog!=null)v.cog=+pos.Cog;
+    else if(pos.CourseOverGround!=null)v.cog=+pos.CourseOverGround;
+    placeMarker(v,String(mmsi)===String(selectedMMSI));
+    if(String(mmsi)===String(selectedMMSI))updatePanel(v);
+    /* auto-select first vessel with position */
+    if(!autoSelectDone&&v.lat!=null){
+      autoSelectDone=true;
+      selectVessel(mmsi);
+      setStatus('found','📍 Señal GPS recibida: '+v.name+' en '+v.lat.toFixed(3)+'°, '+v.lon.toFixed(3)+'°');
     }
   }
 
-  wrapEl.style.display='none';
-  document.getElementById('btnSearch').disabled=false;
+  /* — StaticAndVoyageRelatedData (Type 5) — */
+  const sv=msg.StaticAndVoyageRelatedData;
+  if(sv){
+    if(sv.Destination)v.destination=(sv.Destination||'').trim();
+    if(sv.CallSign)v.callsign=(sv.CallSign||'').trim();
+    if(sv.ImoNumber)v.imo=sv.ImoNumber;
+    if(sv.Type)v.shipType=shipTypeLabel(sv.Type);
+    if(String(mmsi)===String(selectedMMSI))updatePanel(v);
+  }
 
-  if(!results.length){
-    const hint=key
-      ?'⚠️ Buque no encontrado en ninguna base AIS. Verifica el nombre exacto.'
-      :'⚠️ No se encontró. Sin API key de Datalastic la cobertura es solo Báltico. Regístrate gratis en datalastic.com';
-    setStatus('error',hint);
+  /* — country from MMSI prefix — */
+  if(!v.flag)v.flag=mmsiFlag(mmsi);
+
+  updateCounters();
+  scheduleList();
+}
+
+/* ─ ship type label ─ */
+function shipTypeLabel(t){
+  const n=+t;
+  if(n>=70&&n<=79)return 'Carguero';
+  if(n>=80&&n<=89)return 'Tanquero';
+  if(n>=60&&n<=69)return 'Pasajeros';
+  if(n>=30&&n<=39)return 'Pesca';
+  if(n===52)return 'Remolcador';
+  if(n===51)return 'SAR';
+  return 'Tipo '+t;
+}
+
+/* ─ MMSI country prefix (most common) ─ */
+const MMSI_FLAGS={
+  '211':'Alemania','212':'Chipre','215':'Malta','219':'Dinamarca','224':'España',
+  '230':'Finlandia','232':'Reino Unido','233':'Reino Unido','235':'Reino Unido',
+  '244':'Países Bajos','247':'Italia','253':'Suecia','255':'Portugal (Azores)',
+  '257':'Noruega','261':'Polonia','265':'Suecia','267':'Suecia','269':'Suiza',
+  '271':'Türquiye','273':'Rusia','276':'Estonia','277':'Letonia','278':'Lituania',
+  '303':'EE.UU.','316':'Canadá','338':'EE.UU.','352':'Panamá','366':'EE.UU.',
+  '370':'Panamá','374':'Panamá','412':'China','413':'China','414':'China',
+  '416':'Taiwán','431':'Japón','432':'Japón','440':'Corea del Sur','441':'Corea del Sur',
+  '477':'Hong Kong','525':'Indonesia','533':'Malasia','538':'Islas Marshall',
+  '548':'Filipinas','557':'Singapur','563':'Singapur','564':'Singapur','565':'Singapur',
+  '566':'Singapur','574':'Vietnam','576':'Vietnam','636':'Liberia','710':'Brasil',
+  '725':'Chile','730':'Colombia','735':'Colombia','740':'Argentina',
+};
+function mmsiFlag(mmsi){
+  const s=String(mmsi);
+  return MMSI_FLAGS[s.substr(0,3)]||MMSI_FLAGS[s.substr(0,2)]||'';
+}
+
+/* ─── WebSocket ─── */
+function openWS(apiKey, nameFilter){
+  if(ws){ws.onclose=null;ws.close();ws=null;}
+  searchTarget=nameFilter.trim();
+  const url='wss://stream.aisstream.io/v0/stream';
+  try{
+    ws=new WebSocket(url);
+  }catch(e){
+    setStatus('error','❌ No se pudo conectar al WebSocket: '+e.message);
     return;
   }
 
-  // Populate foundVessels
-  results.forEach(v=>{
-    const mmsi=String(v.mmsi||v.UserID||Math.random());
-    foundVessels[mmsi]={
-      ...v,
-      mmsi,
-      name:(v.name||v.shipName||'').trim(),
-      flag:v.flag||v.country_name||v.country_iso||'',
-      type:v.type||'',
-      type_specific:v.type_specific||'',
-      destination:(v.destination||v.dest||'').replace(/@+$/,'').trim()||'No disponible',
-      lat:v.lat!=null?+v.lat:null,
-      lon:v.lon!=null?+v.lon:null,
-      speed:v.speed!=null?+v.speed:null,
-      course:v.course!=null?+v.course:null,
-      updated:v.updated||null,
-      _src:v._src||(source||'Datalastic')
+  ws.onopen=()=>{
+    setStatus('live','🟢 Conectado a aisstream.io — esperando señales AIS para "'+nameFilter+'"...');
+    // Subscribe: world bounding box, all message types
+    const sub={
+      APIkey: apiKey,
+      BoundingBoxes: [[ [-90,-180],[90,180] ]],
+      FilterMessageTypes: ['PositionReport','StaticAndVoyageRelatedData','StandardClassBPositionReport']
     };
-  });
+    ws.send(JSON.stringify(sub));
+    document.getElementById('counterRow').style.display='flex';
+  };
 
-  renderList();
+  ws.onmessage=evt=>{
+    try{processMsg(JSON.parse(evt.data));}catch{}
+  };
 
-  const withPos=Object.keys(foundVessels).filter(m=>foundVessels[m].lat!=null);
+  ws.onerror=()=>{
+    setStatus('error','❌ Error de conexión WebSocket. Verifica tu API key o internet.');
+  };
 
-  // For Datalastic results without position, try the /vessel endpoint
-  if(source==='Datalastic'&&withPos.length===0){
-    setStatus('searching','🔎 Obteniendo posiciones en tiempo real…');
-    await Promise.all(Object.keys(foundVessels).slice(0,10).map(async mmsi=>{
-      const live=await fetchDatalasticLive(mmsi);
-      if(live&&live.lat!=null){
-        const v=foundVessels[mmsi];
-        v.lat=+live.lat;v.lon=+live.lon;
-        v.speed=live.speed!=null?+live.speed:v.speed;
-        v.course=live.course!=null?+live.course:v.course;
-        v.updated=live.updated||v.updated;
-        v.destination=(live.destination||v.destination||'').replace(/@+$/,'').trim()||'No disponible';
-      }
-    }));
-  }
-
-  // Place markers
-  Object.keys(foundVessels).forEach(mmsi=>{
-    const v=foundVessels[mmsi];
-    if(v.lat!=null)placeMarker(v,false);
-  });
-
-  const withPosNow=Object.keys(foundVessels).filter(m=>foundVessels[m].lat!=null);
-  const firstPos=withPosNow[0]||Object.keys(foundVessels)[0];
-  if(firstPos)selectVessel(firstPos);
-
-  if(withPosNow.length>1){
-    mapObj.fitBounds(L.latLngBounds(withPosNow.map(m=>[foundVessels[m].lat,foundVessels[m].lon])).pad(0.35),{animate:true});
-  }else if(withPosNow.length===1){
-    mapObj.setView([foundVessels[withPosNow[0]].lat,foundVessels[withPosNow[0]].lon],5,{animate:true});
-  }
-
-  renderList();
-  setStatus('found','✅ '+Object.keys(foundVessels).length+' buque(s) encontrado(s) via '+source+' — '+withPosNow.length+' con posición GPS.');
-
-  // Poll every 60s for live updates (Datalastic)
-  if(source==='Datalastic'&&key){
-    pollTimer=setInterval(async()=>{
-      await Promise.all(Object.keys(foundVessels).slice(0,10).map(async mmsi=>{
-        const live=await fetchDatalasticLive(mmsi);
-        if(!live)return;
-        const v=foundVessels[mmsi];
-        if(live.lat!=null){v.lat=+live.lat;v.lon=+live.lon;}
-        if(live.speed!=null)v.speed=+live.speed;
-        if(live.course!=null)v.course=+live.course;
-        if(live.updated)v.updated=live.updated;
-        placeMarker(v,String(mmsi)===String(selectedMMSI));
-        if(String(mmsi)===String(selectedMMSI))updatePanel(v);
-      }));
-      renderList();
-    },60000);
-  }
+  ws.onclose=(e)=>{
+    if(e.code!==1000&&e.code!==1001){
+      setStatus('error','⚠️ Conexión cerrada ('+e.code+'). '+(e.code===4000?'API key inválida.':e.reason||'Reintenta.'));
+    }
+    document.getElementById('btnStop').style.display='none';
+    document.getElementById('btnSearch').disabled=false;
+  };
 }
 
-/* ——— clear ——— */
+/* ─ main ─ */
+async function startSearch(){
+  const name=document.getElementById('shipInput').value.trim();
+  if(!name){setStatus('error','⚠️ Ingresa el nombre del buque.');return;}
+  const key=getKey();
+  if(!key){
+    setStatus('error','⚠️ Primero guarda tu API key de aisstream.io (es gratis).');
+    document.getElementById('keyInput').focus();
+    return;
+  }
+  clearSearchState();
+  initMap();
+  document.getElementById('btnSearch').disabled=true;
+  document.getElementById('btnStop').style.display='inline-block';
+  document.getElementById('btnClear').style.display='none';
+  setStatus('searching','📡 Conectando a la red AIS mundial…');
+  openWS(key, name);
+  // show clear after 3s
+  setTimeout(()=>{document.getElementById('btnClear').style.display='inline-block';},3000);
+}
+
+function stopSearch(){
+  if(ws){ws.onclose=null;ws.close();ws=null;}
+  document.getElementById('btnStop').style.display='none';
+  document.getElementById('btnSearch').disabled=false;
+  const n=Object.keys(vessels).length;
+  setStatus(n?'found':'idle', n?'⏹ Detetenido — '+n+' buque(s) capturado(s).':'⏹ Detenido.');
+}
+
 function clearSearchState(){
-  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
-  if(searchTimer){clearTimeout(searchTimer);searchTimer=null;}
-  selectedMMSI=null;foundVessels={};
+  stopSearch();
+  vessels={};selectedMMSI=null;msgCount=0;autoSelectDone=false;searchTarget='';
   Object.values(markers).forEach(m=>{try{mapObj&&mapObj.removeLayer(m);}catch{}});
   markers={};
   updatePanel(null);
+  updateCounters();
   document.getElementById('shipsPanel').style.display='none';
   document.getElementById('shipsList').innerHTML='';
+  document.getElementById('counterRow').style.display='none';
 }
 function clearSearch(){
   clearSearchState();
   document.getElementById('shipInput').value='';
-  document.getElementById('btnSearch').disabled=false;
   document.getElementById('btnClear').style.display='none';
-  document.getElementById('timeoutWrap').style.display='none';
-  if(mapObj)mapObj.setView([10,-75],3,{animate:true});
-  setStatus('idle','Listo. Ingresa el nombre de un buque y presiona Buscar.');
+  if(mapObj)mapObj.setView([10,-75],2,{animate:true});
+  setStatus('idle','Listo.');
 }
 
 document.getElementById('shipInput').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!document.getElementById('btnSearch').disabled)startSearch();
+});
+document.getElementById('keyInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter')saveKey();
 });
 
 initMap();
