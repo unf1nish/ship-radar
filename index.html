@@ -8,210 +8,102 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #07111f;
-      color: #ddeeff;
-      min-height: 100vh;
-      overflow-x: hidden;
+      background: #07111f; color: #ddeeff; min-height: 100vh; overflow-x: hidden;
     }
-
     body::before {
-      content: '';
-      position: fixed; inset: 0;
+      content: ''; position: fixed; inset: 0;
       background:
         radial-gradient(ellipse at 20% 80%, rgba(14,60,110,.55) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 20%, rgba(10,40,80,.45) 0%, transparent 55%),
         linear-gradient(180deg, #07111f 0%, #0b1e35 60%, #081525 100%);
       z-index: 0; pointer-events: none;
     }
-
     .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-    .particle {
-      position: absolute; border-radius: 50%;
-      background: rgba(100,180,255,.18);
-      animation: float-up linear infinite;
-    }
+    .particle { position: absolute; border-radius: 50%; background: rgba(100,180,255,.18); animation: float-up linear infinite; }
     @keyframes float-up {
       0%   { transform: translateY(100vh) scale(0); opacity: 0; }
-      10%  { opacity: 1; }
-      90%  { opacity: 1; }
+      10%  { opacity: 1; } 90% { opacity: 1; }
       100% { transform: translateY(-10vh) scale(1); opacity: 0; }
     }
-
-    .waves-wrap {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: 80px; pointer-events: none; z-index: 0; overflow: hidden; opacity: .18;
-    }
+    .waves-wrap { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; pointer-events: none; z-index: 0; overflow: hidden; opacity: .18; }
     .wave-svg  { width: 200%; animation: wave-move 10s linear infinite; }
     .wave-svg2 { width: 200%; animation: wave-move 16s linear infinite reverse; margin-top: -40px; opacity: .6; }
     @keyframes wave-move { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
     .page-wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 16px 90px; }
-
     header {
       position: relative; z-index: 2;
       background: linear-gradient(90deg, rgba(8,20,40,.95), rgba(14,40,78,.95), rgba(8,20,40,.95));
       border-bottom: 2px solid rgba(56,139,253,.6);
-      padding: 18px 28px;
-      display: flex; align-items: center; gap: 18px;
+      padding: 18px 28px; display: flex; align-items: center; gap: 18px;
       box-shadow: 0 4px 30px rgba(30,100,220,.35);
     }
-    .ship-anim {
-      font-size: 2.6rem;
-      animation: ship-bob 3.5s ease-in-out infinite;
-      filter: drop-shadow(0 0 12px rgba(100,180,255,.7));
-    }
-    @keyframes ship-bob {
-      0%,100% { transform: translateY(0) rotate(-2deg); }
-      50%      { transform: translateY(-9px) rotate(2deg); }
-    }
+    .ship-anim { font-size: 2.6rem; animation: ship-bob 3.5s ease-in-out infinite; filter: drop-shadow(0 0 12px rgba(100,180,255,.7)); }
+    @keyframes ship-bob { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-9px) rotate(2deg); } }
     header h1 { font-size: 1.45rem; font-weight: 700; color: #7ec8ff; text-shadow: 0 0 24px rgba(100,181,246,.6); }
     header p  { font-size: .82rem; color: #6b8aaa; margin-top: 3px; }
-    .header-badge {
-      margin-left: auto; font-size: .7rem; padding: 4px 10px;
-      background: rgba(100,181,246,.12); border: 1px solid rgba(100,181,246,.25);
-      border-radius: 20px; color: #64b5f6; white-space: nowrap;
-    }
-
-    .card {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(100,181,246,.22);
-      border-radius: 14px; padding: 20px 24px;
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    }
-
+    .header-badge { margin-left: auto; font-size: .7rem; padding: 4px 10px; background: rgba(100,181,246,.12); border: 1px solid rgba(100,181,246,.25); border-radius: 20px; color: #64b5f6; white-space: nowrap; }
+    .card { background: rgba(255,255,255,.04); border: 1px solid rgba(100,181,246,.22); border-radius: 14px; padding: 20px 24px; backdrop-filter: blur(12px); }
     .search-section { margin: 22px 0 18px; }
-    .search-label {
-      display: flex; align-items: center; gap: 7px;
-      font-size: .88rem; color: #90c8f8; font-weight: 500; margin-bottom: 10px;
-    }
+    .search-label { display: flex; align-items: center; gap: 7px; font-size: .88rem; color: #90c8f8; font-weight: 500; margin-bottom: 10px; }
     .search-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .search-row input {
-      flex: 1; min-width: 220px; padding: 12px 16px;
-      border-radius: 9px; border: 1px solid rgba(100,181,246,.35);
-      background: rgba(255,255,255,.07); color: #e0f4ff;
-      font-size: 1rem; outline: none;
-      transition: border-color .3s, box-shadow .3s;
-    }
+    .search-row input { flex: 1; min-width: 220px; padding: 12px 16px; border-radius: 9px; border: 1px solid rgba(100,181,246,.35); background: rgba(255,255,255,.07); color: #e0f4ff; font-size: 1rem; outline: none; transition: border-color .3s, box-shadow .3s; }
     .search-row input:focus { border-color: #1e88e5; box-shadow: 0 0 14px rgba(30,136,229,.45); }
     .search-row input::placeholder { color: #3d5a70; }
-
-    .btn {
-      padding: 12px 22px; border-radius: 9px; border: none;
-      cursor: pointer; font-size: .93rem; font-weight: 600;
-      transition: all .28s; white-space: nowrap;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #1251a3, #1e88e5); color: #fff;
-      box-shadow: 0 4px 18px rgba(30,136,229,.45);
-    }
-    .btn-primary:hover:not(:disabled) {
-      background: linear-gradient(135deg, #1565c0, #42a5f5);
-      box-shadow: 0 6px 24px rgba(30,136,229,.65); transform: translateY(-2px);
-    }
+    .btn { padding: 12px 22px; border-radius: 9px; border: none; cursor: pointer; font-size: .93rem; font-weight: 600; transition: all .28s; white-space: nowrap; }
+    .btn-primary { background: linear-gradient(135deg, #1251a3, #1e88e5); color: #fff; box-shadow: 0 4px 18px rgba(30,136,229,.45); }
+    .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #1565c0, #42a5f5); box-shadow: 0 6px 24px rgba(30,136,229,.65); transform: translateY(-2px); }
     .btn-primary:disabled { opacity: .45; cursor: not-allowed; }
-    .btn-secondary {
-      background: rgba(255,255,255,.08); color: #90caf9;
-      border: 1px solid rgba(100,181,246,.3);
-    }
+    .btn-secondary { background: rgba(255,255,255,.08); color: #90caf9; border: 1px solid rgba(100,181,246,.3); }
     .btn-secondary:hover { background: rgba(255,255,255,.14); transform: translateY(-2px); }
-
-    .source-hint {
-      margin-top: 10px; font-size: .78rem;
-      color: #4a7090; display: flex; align-items: center; gap: 6px;
-    }
-    .source-dot { width:8px;height:8px;border-radius:50%;background:#1e88e5;flex-shrink:0; }
-
-    .status-bar {
-      display: flex; align-items: center; gap: 9px;
-      margin-top: 13px; font-size: .85rem; min-height: 26px;
-    }
-    .status-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0;transition:background .4s; }
+    .source-hint { margin-top: 10px; font-size: .78rem; color: #4a7090; display: flex; align-items: center; gap: 6px; }
+    .source-dot { width:8px; height:8px; border-radius:50%; background:#1e88e5; flex-shrink:0; }
+    .status-bar { display: flex; align-items: center; gap: 9px; margin-top: 13px; font-size: .85rem; min-height: 26px; }
+    .status-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; transition:background .4s; }
     .s-idle      .status-dot { background:#4a6275; }
     .s-searching .status-dot { background:#ffb300; animation:blink 1s infinite; }
     .s-found     .status-dot { background:#43a047; animation:blink 2.5s infinite; }
     .s-error     .status-dot { background:#e53935; }
-    @keyframes blink {
-      0%,100%{opacity:1;transform:scale(1);}
-      50%{opacity:.4;transform:scale(1.4);}
-    }
+    @keyframes blink { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(1.4);} }
     .s-idle      .status-text { color:#607d8b; }
     .s-searching .status-text { color:#ffca28; }
     .s-found     .status-text { color:#66bb6a; }
     .s-error     .status-text { color:#ef5350; }
-
     .timeout-wrap { margin-top:10px; display:none; }
-    .timeout-track { height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden; }
-    .timeout-fill {
-      height:100%;width:100%;border-radius:3px;
-      background:linear-gradient(90deg,#1e88e5,#42a5f5);
-      transform-origin:left; animation:drain 60s linear forwards;
-    }
-    @keyframes drain{from{transform:scaleX(1);}to{transform:scaleX(0);}}
-    .timeout-label{font-size:.75rem;color:#546e7a;margin-top:4px;}
-
-    #map {
-      height:480px;border-radius:14px;
-      border:1px solid rgba(100,181,246,.28);
-      margin-bottom:18px;
-      box-shadow:0 8px 40px rgba(0,0,0,.55);
-      overflow:hidden;
-    }
-
-    .info-section h2 {
-      font-size:.95rem;color:#64b5f6;margin-bottom:14px;
-      display:flex;align-items:center;gap:7px;
-    }
-    .info-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px; }
-    .info-card {
-      background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);
-      border-radius:10px;padding:11px 14px;transition:border-color .3s,box-shadow .3s;
-    }
-    .info-card.active { border-color:rgba(100,181,246,.4);box-shadow:0 0 12px rgba(100,181,246,.12); }
-    .info-card .ic-label { font-size:.72rem;color:#607d8b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px; }
-    .info-card .ic-value { font-size:1rem;color:#cce5ff;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .timeout-track { height:5px; border-radius:3px; background:rgba(255,255,255,.08); overflow:hidden; }
+    .timeout-fill { height:100%; width:100%; border-radius:3px; background:linear-gradient(90deg,#1e88e5,#42a5f5); transform-origin:left; animation:drain 60s linear forwards; }
+    @keyframes drain { from{transform:scaleX(1);} to{transform:scaleX(0);} }
+    .timeout-label { font-size:.75rem; color:#546e7a; margin-top:4px; }
+    #map { height:480px; border-radius:14px; border:1px solid rgba(100,181,246,.28); margin-bottom:18px; box-shadow:0 8px 40px rgba(0,0,0,.55); overflow:hidden; }
+    .info-section h2 { font-size:.95rem; color:#64b5f6; margin-bottom:14px; display:flex; align-items:center; gap:7px; }
+    .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:11px; }
+    .info-card { background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:11px 14px; transition:border-color .3s,box-shadow .3s; }
+    .info-card.active { border-color:rgba(100,181,246,.4); box-shadow:0 0 12px rgba(100,181,246,.12); }
+    .info-card .ic-label { font-size:.72rem; color:#607d8b; text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; }
+    .info-card .ic-value { font-size:1rem; color:#cce5ff; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .ic-value.blue  { color:#64b5f6; }
     .ic-value.green { color:#66bb6a; }
-
-    .ships-panel { margin-top: 18px; }
-    .ships-panel h2 { font-size:.95rem;color:#64b5f6;margin-bottom:12px;display:flex;align-items:center;gap:7px; }
+    .ships-panel { margin-top:18px; }
+    .ships-panel h2 { font-size:.95rem; color:#64b5f6; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
     #shipsList { list-style:none; display:flex; flex-direction:column; gap:7px; max-height:260px; overflow-y:auto; }
     #shipsList::-webkit-scrollbar { width:5px; }
-    #shipsList::-webkit-scrollbar-thumb { background:rgba(100,181,246,.25);border-radius:3px; }
-    .ship-item {
-      display:flex;align-items:center;gap:10px;padding:9px 13px;
-      background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);
-      border-radius:9px;cursor:pointer;transition:border-color .25s,background .25s;
-    }
-    .ship-item:hover { background:rgba(100,181,246,.09);border-color:rgba(100,181,246,.3); }
-    .ship-item.selected { background:rgba(30,136,229,.12);border-color:#1e88e5; }
-    .ship-item .si-name { font-size:.9rem;color:#ddeeff;font-weight:500;flex:1; }
-    .ship-item .si-mmsi { font-size:.75rem;color:#607d8b; }
-
-    .leaflet-popup-content-wrapper {
-      background:#0d2137!important;color:#ddeeff!important;
-      border:1px solid #1e88e5!important;border-radius:10px!important;
-      box-shadow:0 4px 20px rgba(30,136,229,.4)!important;
-    }
+    #shipsList::-webkit-scrollbar-thumb { background:rgba(100,181,246,.25); border-radius:3px; }
+    .ship-item { display:flex; align-items:center; gap:10px; padding:9px 13px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.07); border-radius:9px; cursor:pointer; transition:border-color .25s,background .25s; }
+    .ship-item:hover { background:rgba(100,181,246,.09); border-color:rgba(100,181,246,.3); }
+    .ship-item.selected { background:rgba(30,136,229,.12); border-color:#1e88e5; }
+    .ship-item .si-name { font-size:.9rem; color:#ddeeff; font-weight:500; flex:1; }
+    .ship-item .si-mmsi { font-size:.75rem; color:#607d8b; }
+    .leaflet-popup-content-wrapper { background:#0d2137!important; color:#ddeeff!important; border:1px solid #1e88e5!important; border-radius:10px!important; box-shadow:0 4px 20px rgba(30,136,229,.4)!important; }
     .leaflet-popup-tip { background:#0d2137!important; }
-    .popup-inner h3 { color:#64b5f6;margin-bottom:8px;font-size:1rem; }
-    .popup-inner p  { font-size:.84rem;line-height:1.7;color:#90a4ae; }
+    .popup-inner h3 { color:#64b5f6; margin-bottom:8px; font-size:1rem; }
+    .popup-inner p  { font-size:.84rem; line-height:1.7; color:#90a4ae; }
     .popup-inner strong { color:#ddeeff; }
-
-    @media(max-width:580px){
-      header h1{font-size:1.05rem;}
-      #map{height:320px;}
-      .search-row{flex-direction:column;}
-      .header-badge{display:none;}
-    }
+    @media(max-width:580px){ header h1{font-size:1.05rem;} #map{height:320px;} .search-row{flex-direction:column;} .header-badge{display:none;} }
   </style>
 </head>
 <body>
-
 <div class="particles" id="particles"></div>
-
 <div class="waves-wrap">
   <svg class="wave-svg" viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
     <path d="M0,40 C200,80 400,0 600,40 C800,80 1000,0 1200,40 L1200,80 L0,80 Z" fill="#1e88e5"/>
@@ -220,7 +112,6 @@
     <path d="M0,50 C150,10 350,70 600,40 C850,10 1050,70 1200,50 L1200,80 L0,80 Z" fill="#0d47a1"/>
   </svg>
 </div>
-
 <header>
   <div class="ship-anim">🚢</div>
   <div>
@@ -229,102 +120,65 @@
   </div>
   <div class="header-badge">🌊 Digitraffic AIS · Sin backend</div>
 </header>
-
 <div class="page-wrap">
-
   <div class="card search-section">
-    <div class="search-label">
-      <span>📡</span>
-      <span>Nombre del buque (se busca en la base AIS del Mar Báltico y aguas europeas)</span>
-    </div>
+    <div class="search-label"><span>📡</span><span>Nombre del buque — cobertura óptima: Mar Báltico y costas europeas</span></div>
     <div class="search-row">
-      <input
-        type="text" id="shipInput"
-        placeholder="Ej: FINNMASTER, VIKING GRACE, SILJA EUROPA, ASTEROID…"
-        maxlength="50" autocomplete="off" spellcheck="false"
-      />
+      <input type="text" id="shipInput" placeholder="Ej: VIKING GRACE, SILJA EUROPA, AURORA BOTNICA, ASTEROID…" maxlength="50" autocomplete="off" spellcheck="false" />
       <button class="btn btn-primary" id="btnSearch" onclick="startSearch()">🔍 Buscar</button>
       <button class="btn btn-secondary" id="btnClear" style="display:none" onclick="clearSearch()">🔄 Nueva búsqueda</button>
     </div>
-
     <div class="source-hint">
       <div class="source-dot"></div>
-      Fuente: <strong style="color:#5b9bd5">Digitraffic Finland</strong> — API pública AIS, sin restricciones de navegador.
-      Cobertura óptima: Mar Báltico, Mar del Norte, costas europeas.
+      Fuente: <strong style="color:#5b9bd5">Digitraffic Finland</strong> — API pública AIS sin restricciones CORS.
+      Nombres comunes: VIKING GRACE, SILJA EUROPA, AURORA BOTNICA, FINNMASTER, ASTEROID.
     </div>
-
-    <div class="status-bar s-idle" id="statusBar">
-      <div class="status-dot"></div>
-      <span class="status-text" id="statusText">Listo. Ingresa el nombre de un buque y presiona Buscar.</span>
-    </div>
-
+    <div class="status-bar s-idle" id="statusBar"><div class="status-dot"></div><span class="status-text" id="statusText">Listo. Ingresa el nombre de un buque y presiona Buscar.</span></div>
     <div class="timeout-wrap" id="timeoutWrap">
       <div class="timeout-track"><div class="timeout-fill" id="timeoutFill"></div></div>
       <div class="timeout-label">Tiempo de búsqueda: 60 segundos</div>
     </div>
   </div>
-
   <div id="map"></div>
-
-  <div class="card ships-panel" id="shipsPanel" style="display:none; margin-bottom:18px;">
-    <h2>🔎 Buques encontrados — haz clic para ver en el mapa</h2>
+  <div class="card ships-panel" id="shipsPanel" style="display:none;margin-bottom:18px;">
+    <h2>🔎 Buques encontrados — haz clic para centrar en el mapa</h2>
     <ul id="shipsList"></ul>
   </div>
-
   <div class="card info-section">
     <h2>📊 Información del buque seleccionado</h2>
     <div class="info-grid">
-      <div class="info-card" id="ic-name">
-        <div class="ic-label">🚢 Nombre</div>
-        <div class="ic-value blue" id="iv-name">—</div>
-      </div>
-      <div class="info-card" id="ic-mmsi">
-        <div class="ic-label">🆔 MMSI</div>
-        <div class="ic-value" id="iv-mmsi">—</div>
-      </div>
-      <div class="info-card" id="ic-lat">
-        <div class="ic-label">🌐 Latitud</div>
-        <div class="ic-value" id="iv-lat">—</div>
-      </div>
-      <div class="info-card" id="ic-lon">
-        <div class="ic-label">🌐 Longitud</div>
-        <div class="ic-value" id="iv-lon">—</div>
-      </div>
-      <div class="info-card" id="ic-speed">
-        <div class="ic-label">⚡ Velocidad (SOG)</div>
-        <div class="ic-value green" id="iv-speed">—</div>
-      </div>
-      <div class="info-card" id="ic-cog">
-        <div class="ic-label">🧭 Rumbo (COG)</div>
-        <div class="ic-value" id="iv-cog">—</div>
-      </div>
-      <div class="info-card" id="ic-dest">
-        <div class="ic-label">🛳️ Destino</div>
-        <div class="ic-value" id="iv-dest">—</div>
-      </div>
-      <div class="info-card" id="ic-updated">
-        <div class="ic-label">🕐 Última señal</div>
-        <div class="ic-value" id="iv-updated">—</div>
-      </div>
+      <div class="info-card" id="ic-name"><div class="ic-label">🚢 Nombre</div><div class="ic-value blue" id="iv-name">—</div></div>
+      <div class="info-card" id="ic-mmsi"><div class="ic-label">🆔 MMSI</div><div class="ic-value" id="iv-mmsi">—</div></div>
+      <div class="info-card" id="ic-lat"><div class="ic-label">🌐 Latitud</div><div class="ic-value" id="iv-lat">—</div></div>
+      <div class="info-card" id="ic-lon"><div class="ic-label">🌐 Longitud</div><div class="ic-value" id="iv-lon">—</div></div>
+      <div class="info-card" id="ic-speed"><div class="ic-label">⚡ Velocidad (SOG)</div><div class="ic-value green" id="iv-speed">—</div></div>
+      <div class="info-card" id="ic-cog"><div class="ic-label">🧭 Rumbo (COG)</div><div class="ic-value" id="iv-cog">—</div></div>
+      <div class="info-card" id="ic-dest"><div class="ic-label">🛳️ Destino</div><div class="ic-value" id="iv-dest">—</div></div>
+      <div class="info-card" id="ic-updated"><div class="ic-label">🕐 Última señal</div><div class="ic-value" id="iv-updated">—</div></div>
     </div>
   </div>
-
 </div>
 
 <script>
+/* ── Particles ── */
 (function(){
-  const wrap=document.getElementById('particles');
+  const w=document.getElementById('particles');
   for(let i=0;i<22;i++){
     const p=document.createElement('div');p.className='particle';
     const s=3+Math.random()*6;
-    p.style.cssText=['width:'+s+'px','height:'+s+'px','left:'+(Math.random()*100)+'%',
-      'animation-duration:'+(12+Math.random()*20)+'s','animation-delay:'+(-Math.random()*20)+'s'].join(';');
-    wrap.appendChild(p);
+    p.style.cssText='width:'+s+'px;height:'+s+'px;left:'+(Math.random()*100)+'%;animation-duration:'+(12+Math.random()*20)+'s;animation-delay:'+(-Math.random()*20)+'s';
+    w.appendChild(p);
   }
 })();
 
+/* ── State ── */
 let mapObj=null,markers={},searchTimeout=null,selectedMMSI=null,foundVessels={},pollInterval=null;
 
+/* ── Digitraffic header ── */
+// Required to avoid rate-limiting per Digitraffic docs
+const DT_HEADERS = {'Digitraffic-User':'ShipRadar/1.0'};
+
+/* ── Map ── */
 function initMap(){
   if(mapObj)return;
   mapObj=L.map('map',{zoomControl:true}).setView([56,15],4);
@@ -333,64 +187,95 @@ function initMap(){
   }).addTo(mapObj);
 }
 
+/* ── Icon ── */
 function buildIcon(cog,selected){
-  const rot=cog||0,col=selected?'#ff6d00':'#1e88e5';
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
-    <g transform="rotate(${rot},22,22)">
-      <polygon points="22,5 31,39 22,33 13,39" fill="${col}" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
-      <circle cx="22" cy="22" r="4" fill="#ffffff"/>
-    </g>
-    <circle cx="22" cy="22" r="19" fill="none" stroke="${col}" stroke-width="1.5" opacity="0.5">
-      <animate attributeName="r" values="19;25;19" dur="2.4s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.5;0;0.5" dur="2.4s" repeatCount="indefinite"/>
-    </circle>
-  </svg>`;
+  const rot=isFinite(cog)?cog:0, col=selected?'#ff6d00':'#1e88e5';
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">'
+    +'<g transform="rotate('+rot+',22,22)">'
+    +'<polygon points="22,5 31,39 22,33 13,39" fill="'+col+'" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>'
+    +'<circle cx="22" cy="22" r="4" fill="#fff"/>'
+    +'</g>'
+    +'<circle cx="22" cy="22" r="19" fill="none" stroke="'+col+'" stroke-width="1.5" opacity="0.5">'
+    +'<animate attributeName="r" values="19;25;19" dur="2.4s" repeatCount="indefinite"/>'
+    +'<animate attributeName="opacity" values="0.5;0;0.5" dur="2.4s" repeatCount="indefinite"/>'
+    +'</circle></svg>';
   return L.divIcon({html:svg,className:'',iconSize:[44,44],iconAnchor:[22,22],popupAnchor:[0,-24]});
 }
 
+/* ── Status ── */
 function setStatus(state,msg){
-  const bar=document.getElementById('statusBar');
-  bar.className='status-bar s-'+state;
+  document.getElementById('statusBar').className='status-bar s-'+state;
   document.getElementById('statusText').textContent=msg;
 }
 
+/* ── Timestamp formatting ──
+   Digitraffic returns Unix timestamp in SECONDS (not ms).
+   Values < 1e10 are seconds; multiply by 1000 for JS Date.
+   ISO strings are passed directly.
+*/
 function fmtTime(ts){
-  if(!ts)return'No disponible';
-  try{return new Date(ts).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+' UTC';}
-  catch{return String(ts);}
+  if(ts===null||ts===undefined||ts==='')return 'No disponible';
+  try{
+    let d;
+    if(typeof ts==='string'){
+      d=new Date(ts);
+    } else {
+      // Unix epoch: if < 1e10 it's in seconds, else already ms
+      const ms = ts < 1e10 ? ts*1000 : ts;
+      d=new Date(ms);
+    }
+    if(isNaN(d.getTime()))return 'No disponible';
+    // Show as relative + time
+    const now=Date.now();
+    const ms2=d.getTime();
+    const diff=Math.round((now-ms2)/1000);
+    let rel;
+    if(diff<0)rel='ahora';
+    else if(diff<60)rel='hace '+diff+'s';
+    else if(diff<3600)rel='hace '+Math.round(diff/60)+'min';
+    else if(diff<86400)rel='hace '+Math.round(diff/3600)+'h';
+    else rel='hace '+Math.round(diff/86400)+'d';
+    const time=d.toISOString().substr(11,8)+' UTC';
+    return time+' ('+rel+')';
+  }catch(e){return String(ts);}
 }
 
+/* ── Panel update ── */
 function updatePanel(v){
-  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
   const keys=['name','mmsi','lat','lon','speed','cog','dest','updated'];
   if(!v){
     ['iv-name','iv-mmsi','iv-lat','iv-lon','iv-speed','iv-cog','iv-dest','iv-updated'].forEach(id=>set(id,'—'));
     keys.forEach(k=>{const c=document.getElementById('ic-'+k);if(c)c.classList.remove('active');});
     return;
   }
-  set('iv-name',v.name||'—');
-  set('iv-mmsi',v.mmsi||'—');
-  set('iv-lat',v.lat!==undefined?v.lat.toFixed(5)+'°':'—');
-  set('iv-lon',v.lon!==undefined?v.lon.toFixed(5)+'°':'—');
-  set('iv-speed',v.sog!==undefined?v.sog.toFixed(1)+' kn':'—');
-  set('iv-cog',v.cog!==undefined?v.cog.toFixed(1)+'°':'—');
-  set('iv-dest',(v.dest&&v.dest.trim())||'No disponible');
-  set('iv-updated',fmtTime(v.updated));
+  set('iv-name', v.name||'—');
+  set('iv-mmsi', v.mmsi||'—');
+  set('iv-lat',  v.lat!=null ? v.lat.toFixed(5)+'°' : '—');
+  set('iv-lon',  v.lon!=null ? v.lon.toFixed(5)+'°' : '—');
+  set('iv-speed',v.sog!=null ? (+v.sog).toFixed(1)+' kn' : '—');
+  set('iv-cog',  v.cog!=null ? (+v.cog).toFixed(1)+'°'  : '—');
+  set('iv-dest', (v.dest&&v.dest.trim())||'No disponible');
+  set('iv-updated', fmtTime(v.updated));
   keys.forEach(k=>{const c=document.getElementById('ic-'+k);if(c)c.classList.add('active');});
 }
 
+/* ── Popup ── */
 function popupHtml(v){
-  return`<div class="popup-inner"><h3>🚢 ${v.name||'Desconocido'}</h3><p>
-    <strong>MMSI:</strong> ${v.mmsi||'—'}<br>
-    <strong>Velocidad:</strong> ${v.sog!==undefined?v.sog.toFixed(1)+' kn':'—'}<br>
-    <strong>Rumbo (COG):</strong> ${v.cog!==undefined?v.cog.toFixed(1)+'°':'—'}<br>
-    <strong>Destino:</strong> ${(v.dest&&v.dest.trim())||'No disponible'}<br>
-    <strong>Última señal:</strong> ${fmtTime(v.updated)}
-  </p></div>`;
+  const spd=v.sog!=null?(+v.sog).toFixed(1)+' kn':'—';
+  const cog=v.cog!=null?(+v.cog).toFixed(1)+'°':'—';
+  return '<div class="popup-inner"><h3>🚢 '+(v.name||'Desconocido')+'</h3><p>'
+    +'<strong>MMSI:</strong> '+(v.mmsi||'—')+'<br>'
+    +'<strong>Velocidad:</strong> '+spd+'<br>'
+    +'<strong>Rumbo (COG):</strong> '+cog+'<br>'
+    +'<strong>Destino:</strong> '+((v.dest&&v.dest.trim())||'No disponible')+'<br>'
+    +'<strong>Última señal:</strong> '+fmtTime(v.updated)
+    +'</p></div>';
 }
 
+/* ── Marker ── */
 function placeMarker(v,selected){
-  if(v.lat===undefined||v.lon===undefined)return;
+  if(v.lat==null||v.lon==null)return;
   const ll=[v.lat,v.lon];
   if(markers[v.mmsi]){
     markers[v.mmsi].setLatLng(ll);
@@ -404,6 +289,7 @@ function placeMarker(v,selected){
   }
 }
 
+/* ── Select vessel ── */
 function selectVessel(mmsi){
   selectedMMSI=mmsi;
   const v=foundVessels[mmsi];
@@ -411,17 +297,16 @@ function selectVessel(mmsi){
   updatePanel(v);
   Object.keys(foundVessels).forEach(m=>{
     const fv=foundVessels[m];
-    if(fv.lat!==undefined)placeMarker(fv,String(m)===String(mmsi));
+    if(fv.lat!=null)placeMarker(fv,String(m)===String(mmsi));
   });
-  if(v.lat!==undefined){
+  if(v.lat!=null){
     mapObj.setView([v.lat,v.lon],7,{animate:true});
-    markers[mmsi]&&markers[mmsi].openPopup();
+    if(markers[mmsi])markers[mmsi].openPopup();
   }
-  document.querySelectorAll('.ship-item').forEach(el=>{
-    el.classList.toggle('selected',el.dataset.mmsi===String(mmsi));
-  });
+  document.querySelectorAll('.ship-item').forEach(el=>el.classList.toggle('selected',el.dataset.mmsi===String(mmsi)));
 }
 
+/* ── List ── */
 function renderList(){
   const panel=document.getElementById('shipsPanel');
   const ul=document.getElementById('shipsList');
@@ -434,102 +319,135 @@ function renderList(){
     const li=document.createElement('li');
     li.className='ship-item'+(String(mmsi)===String(selectedMMSI)?' selected':'');
     li.dataset.mmsi=mmsi;
-    li.innerHTML=`<span>🚢</span><span class="si-name">${v.name||'Sin nombre'}</span>
-      <span class="si-mmsi">MMSI: ${mmsi}</span>
-      <span style="color:#64b5f6;font-size:.8rem">${v.lat!==undefined?'📍':'⏳'}</span>`;
+    const hasPos=v.lat!=null;
+    const timeStr=hasPos?fmtTime(v.updated):'⏳ sin posición';
+    li.innerHTML='<span>🚢</span>'
+      +'<span class="si-name">'+(v.name||'Sin nombre')+'</span>'
+      +'<span class="si-mmsi">'+mmsi+'</span>'
+      +'<span style="font-size:.75rem;color:'+(hasPos?'#66bb6a':'#607d8b')+'">'+(hasPos?'📍 '+timeStr:'⚠️ sin GPS')+'</span>';
     li.addEventListener('click',()=>selectVessel(mmsi));
     ul.appendChild(li);
   });
 }
 
-async function fetchVesselsByName(term){
-  const upper=term.trim().toUpperCase();
-  const urls=[
-    `https://meri.digitraffic.fi/api/ais/v1/vessels?name=${encodeURIComponent(term)}`,
-    `https://meri.digitraffic.fi/api/ais/v1/vessels`
-  ];
-  for(const url of urls){
-    try{
-      const r=await fetch(url,{signal:AbortSignal.timeout(15000)});
-      if(!r.ok)continue;
-      const data=await r.json();
-      const arr=Array.isArray(data)?data:[];
-      const filtered=arr.filter(v=>(v.name||'').trim().toUpperCase().includes(upper));
-      if(filtered.length||url===urls[1])return filtered;
-    }catch(e){if(url===urls[1])return[];}
-  }
-  return[];
+/* ── Extract timestamp from Digitraffic location properties ──
+   Possible fields: timestampExternal (seconds), timestamp (seconds), time (ISO)
+*/
+function extractTimestamp(props){
+  if(!props)return null;
+  // Try ISO string fields first
+  if(props.time)return props.time;
+  if(props.msgtime)return props.msgtime;
+  // Unix seconds fields
+  const ts=props.timestampExternal??props.timestamp??null;
+  return ts;
 }
 
+/* ── Fetch vessels by name (Digitraffic) ── */
+async function fetchVesselsByName(term){
+  const upper=term.trim().toUpperCase();
+  // Try name-filtered endpoint first, fall back to full list
+  const attempts=[
+    'https://meri.digitraffic.fi/api/ais/v1/vessels?name='+encodeURIComponent(term),
+    'https://meri.digitraffic.fi/api/ais/v1/vessels'
+  ];
+  for(const url of attempts){
+    try{
+      const r=await fetch(url,{headers:DT_HEADERS,signal:AbortSignal.timeout(20000)});
+      if(!r.ok)continue;
+      const data=await r.json();
+      const arr=Array.isArray(data)?data:(data.features?data.features.map(f=>({mmsi:f.properties.mmsi,...f.properties})):[]);
+      const filtered=arr.filter(v=>(v.name||v.shipName||'').trim().toUpperCase().includes(upper));
+      if(filtered.length>0)return filtered;
+      // If full list returned 0 matches, stop
+      if(url===attempts[1])return [];
+    }catch(e){
+      if(url===attempts[1])return [];
+    }
+  }
+  return [];
+}
+
+/* ── Fetch location for one MMSI ── */
+async function fetchOneLocation(mmsi){
+  try{
+    const r=await fetch('https://meri.digitraffic.fi/api/ais/v1/locations/'+mmsi,
+      {headers:DT_HEADERS,signal:AbortSignal.timeout(12000)});
+    if(!r.ok)return null;
+    const d=await r.json();
+    // Response is a GeoJSON Feature
+    if(d&&d.geometry&&d.geometry.coordinates&&d.geometry.coordinates.length>=2){
+      const props=d.properties||{};
+      return {
+        lat: d.geometry.coordinates[1],
+        lon: d.geometry.coordinates[0],
+        sog: props.sog??props.speedOverGround??null,
+        cog: props.cog??props.courseOverGround??null,
+        updated: extractTimestamp(props)
+      };
+    }
+    return null;
+  }catch(e){return null;}
+}
+
+/* ── Fetch all locations batch ── */
 async function fetchLocations(mmsiList){
   const results={};
   await Promise.all(mmsiList.map(async mmsi=>{
-    try{
-      const r=await fetch(`https://meri.digitraffic.fi/api/ais/v1/locations/${mmsi}`,
-        {signal:AbortSignal.timeout(10000)});
-      if(!r.ok)return;
-      const d=await r.json();
-      if(d&&d.geometry&&d.geometry.coordinates){
-        results[mmsi]={
-          lat:d.geometry.coordinates[1],lon:d.geometry.coordinates[0],
-          sog:d.properties&&d.properties.sog,cog:d.properties&&d.properties.cog,
-          updated:d.properties&&(d.properties.timestampExternal||d.properties.timestamp)
-        };
-      }
-    }catch{}
+    const loc=await fetchOneLocation(mmsi);
+    if(loc)results[mmsi]=loc;
   }));
   return results;
 }
 
+/* ── Polling ── */
 function stopPolling(){if(pollInterval){clearInterval(pollInterval);pollInterval=null;}}
-
 function startPolling(mmsiList){
   stopPolling();
   pollInterval=setInterval(async()=>{
     const locs=await fetchLocations(mmsiList);
+    let updated=0;
     Object.keys(locs).forEach(mmsi=>{
       const v=foundVessels[mmsi];if(!v)return;
       const loc=locs[mmsi];
       v.lat=loc.lat;v.lon=loc.lon;v.sog=loc.sog;v.cog=loc.cog;v.updated=loc.updated;
       placeMarker(v,String(mmsi)===String(selectedMMSI));
-      if(String(mmsi)===String(selectedMMSI)){
-        updatePanel(v);
-        setStatus('found','✅ '+v.name+' – Posición actualizada · '+loc.lat.toFixed(4)+'°, '+loc.lon.toFixed(4)+'°');
-      }
+      if(String(mmsi)===String(selectedMMSI)){updatePanel(v);}
+      updated++;
     });
+    if(updated>0){
+      const sel=foundVessels[selectedMMSI];
+      if(sel&&sel.lat!=null)
+        setStatus('found','✅ '+sel.name+' – Actualizado · '+sel.lat.toFixed(4)+'°, '+sel.lon.toFixed(4)+'°');
+    }
     renderList();
   },30000);
 }
 
+/* ── Main search ── */
 async function startSearch(){
   const raw=document.getElementById('shipInput').value.trim();
   if(!raw){setStatus('error','⚠️ Por favor ingresa el nombre del buque.');return;}
-
   clearSearchState();
-
   document.getElementById('btnSearch').disabled=true;
   document.getElementById('btnClear').style.display='inline-block';
-
   const wrap=document.getElementById('timeoutWrap');
-  wrap.innerHTML=`<div class="timeout-track"><div class="timeout-fill" id="timeoutFill"></div></div>
-    <div class="timeout-label">Tiempo de búsqueda: 60 segundos</div>`;
+  wrap.innerHTML='<div class="timeout-track"><div class="timeout-fill" id="timeoutFill"></div></div><div class="timeout-label">Tiempo de búsqueda: 60 segundos</div>';
   wrap.style.display='block';
-
   initMap();
   setStatus('searching','📡 Buscando "'+raw+'" en la base de datos AIS…');
 
   searchTimeout=setTimeout(()=>{
     if(!Object.keys(foundVessels).length){
-      document.getElementById('timeoutWrap').style.display='none';
+      wrap.style.display='none';
       document.getElementById('btnSearch').disabled=false;
       setStatus('error','⚠️ Buque no encontrado. Puede estar fuera de cobertura AIS o el nombre no coincide exactamente.');
     }
   },60000);
 
   const vessels=await fetchVesselsByName(raw);
-
   clearTimeout(searchTimeout);
-  document.getElementById('timeoutWrap').style.display='none';
+  wrap.style.display='none';
   document.getElementById('btnSearch').disabled=false;
 
   if(!vessels.length){
@@ -541,15 +459,14 @@ async function startSearch(){
   document.getElementById('btnSearch').disabled=true;
 
   vessels.forEach(v=>{
-    foundVessels[v.mmsi]={
-      name:(v.name||'').trim(),mmsi:v.mmsi,
-      dest:(v.destination||'').replace(/@+$/,'').trim()||'No disponible',
-      lat:undefined,lon:undefined,sog:undefined,cog:undefined,updated:undefined
-    };
+    const mmsi=v.mmsi||v.UserID;
+    const name=(v.name||v.shipName||'').trim();
+    const dest=(v.destination||v.Destination||'').replace(/@+$/,'').trim()||'No disponible';
+    foundVessels[mmsi]={name,mmsi,dest,lat:null,lon:null,sog:null,cog:null,updated:null};
   });
   renderList();
 
-  const mmsiList=vessels.map(v=>v.mmsi);
+  const mmsiList=Object.keys(foundVessels);
   const locs=await fetchLocations(mmsiList);
   let located=0;
   mmsiList.forEach(mmsi=>{
@@ -558,19 +475,20 @@ async function startSearch(){
     if(loc){v.lat=loc.lat;v.lon=loc.lon;v.sog=loc.sog;v.cog=loc.cog;v.updated=loc.updated;placeMarker(v,false);located++;}
   });
 
-  const firstLocated=mmsiList.find(m=>foundVessels[m]&&foundVessels[m].lat!==undefined);
+  const firstLocated=mmsiList.find(m=>foundVessels[m]&&foundVessels[m].lat!=null);
   if(firstLocated){
     selectVessel(firstLocated);
-    setStatus('found','✅ '+vessels.length+' buque(s) encontrado(s), '+located+' con posición GPS activa.');
+    setStatus('found','✅ '+vessels.length+' buque(s) encontrado(s) — '+located+' con posición GPS activa.');
   }else{
     selectVessel(mmsiList[0]);
-    setStatus('found','✅ '+vessels.length+' buque(s) en la base AIS.'+(located===0?' Sin posición GPS reciente.':''));
+    setStatus('found','✅ '+vessels.length+' buque(s) en base AIS. Sin posición GPS reciente (fuera de cobertura satelital).');
   }
 
-  const withPos=mmsiList.filter(m=>foundVessels[m]&&foundVessels[m].lat!==undefined);
-  if(withPos.length>1){
-    const latlngs=withPos.map(m=>[foundVessels[m].lat,foundVessels[m].lon]);
-    mapObj.fitBounds(L.latLngBounds(latlngs).pad(0.3),{animate:true});
+  const withPos=mmsiList.filter(m=>foundVessels[m]&&foundVessels[m].lat!=null);
+  if(withPos.length===1){
+    mapObj.setView([foundVessels[withPos[0]].lat,foundVessels[withPos[0]].lon],7,{animate:true});
+  }else if(withPos.length>1){
+    mapObj.fitBounds(L.latLngBounds(withPos.map(m=>[foundVessels[m].lat,foundVessels[m].lon])).pad(0.3),{animate:true});
   }
 
   renderList();
@@ -578,17 +496,17 @@ async function startSearch(){
   startPolling(mmsiList);
 }
 
+/* ── Clear ── */
 function clearSearchState(){
   stopPolling();
   clearTimeout(searchTimeout);searchTimeout=null;
   selectedMMSI=null;foundVessels={};
-  Object.values(markers).forEach(m=>mapObj&&mapObj.removeLayer(m));
+  Object.values(markers).forEach(m=>{try{mapObj&&mapObj.removeLayer(m);}catch{}});
   markers={};
   updatePanel(null);
   document.getElementById('shipsPanel').style.display='none';
   document.getElementById('shipsList').innerHTML='';
 }
-
 function clearSearch(){
   clearSearchState();
   document.getElementById('shipInput').value='';
